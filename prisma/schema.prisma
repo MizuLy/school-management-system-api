@@ -1,0 +1,233 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  // output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(uuid())
+  name String
+  email String @unique
+  password String
+  role RoleList
+  contact String
+
+  createdAt DateTime @default(now())
+
+  teacher Teacher? // They're ? because a user only has one profile and it's optional depending on role. (nullable)
+  student Student?
+  guardian Guardian?
+  events Event[] @relation("PostCreator")
+  registration RegistrationToken[] @relation("QRGenerator")
+  permissionRequests PermissionRequest[] @relation("Requester")
+  permissionApproved PermissionRequest[] @relation("Approver")
+}
+
+model Teacher {
+  id String @id @default(uuid())
+  userId String @unique // @unique (one-to-one) because 1 person only has 1 account
+  imageUrl String?
+  createdAt DateTime @default(now())
+
+  // Relation
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  classes Class[]
+  subjects Subject[]
+}
+
+model Student {
+  id String @id @default(uuid())
+  userId String @unique
+  guardianId String? // Add later
+  imageUrl String?
+  gender Gender
+  dob DateTime @db.Date
+  
+  joinedAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  guardian Guardian? @relation(fields: [guardianId], references: [id], onDelete: SetNull)
+  submissions Submission[]
+  grades Grade[]
+  attendance Attendance[]
+  classStudent ClassStudent[]
+}
+
+model Guardian {
+  id String @id @default(uuid())
+  userId String @unique
+
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  students Student[]
+}
+
+model Event {
+  id String @id @default(uuid())
+  title String
+  imageUrl String?
+  description String?
+  postedBy String
+  postedAt DateTime @default(now())
+
+  creator User @relation("PostCreator",fields: [postedBy], references: [id], onDelete: Cascade)
+}
+
+model RegistrationToken { // For Student to scan
+  id String @id @default(uuid())
+  token String @unique
+  generatedBy String
+  usedAt DateTime?
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  generator User @relation("QRGenerator", fields: [generatedBy], references: [id], onDelete: Cascade)
+}
+
+model Class {
+  id String @id @default(uuid())
+  gradeLevelId String
+  teacherId String
+  room Int
+  schedule String // Monday 9:00-11:30
+  createdAt DateTime @default(now())
+
+  teacher Teacher @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  subjects Subject[]
+  assignments Assignment[]
+  attendances Attendance[]
+  classStudent ClassStudent[]
+  gradeLevel GradeLevel @relation(fields: [gradeLevelId], references: [id], onDelete: Cascade)
+}
+
+model GradeLevel {
+  id String @id @default(uuid())
+  name String @unique // same name cant exist twice
+  description String?
+  createdAt DateTime @default(now())
+
+  classes Class[]
+}
+
+model ClassStudent {
+  id String @id @default(uuid())
+  studentId String
+  classId String
+  createdAt DateTime @default(now())
+
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  class Class @relation(fields: [classId], references: [id], onDelete: Cascade)
+
+  // Prevent student from being enrolled in the same class twice
+  @@unique([studentId, classId])
+}
+
+model Subject {
+  id String @id @default(uuid())
+  name String
+  classId String
+  teacherId String
+  createdAt DateTime @default(now())
+
+  class Class @relation(fields: [classId], references: [id], onDelete: Cascade)
+  teacher Teacher @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  assignments Assignment[]
+}
+
+model Submission {
+  id String @id @default(uuid())
+  studentId String
+  assignmentId String
+  fileUrl String?
+  submittedAt DateTime @default(now())
+
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  assignment Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+  grade Grade[]
+}
+
+model Assignment {
+  id String @id @default(uuid())
+  title String?
+  subjectId String
+  classId String
+  fileUrl String?
+  description String?
+  postedAt DateTime @default(now())
+
+  submissions Submission[]
+  subject Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  class Class @relation(fields: [classId], references: [id], onDelete: Cascade)
+}
+
+model Grade {
+  id String @id @default(uuid())
+  studentId String
+  submissionId String
+  score Float
+  term Int
+  recordedAt DateTime @default(now())
+
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  submission Submission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+}
+
+model Attendance {
+  id String @id @default(uuid())
+  studentId String
+  classId String
+  date DateTime @db.Date
+  status StatusAttendance @default(PRESENT)
+  confirmedAt DateTime @default(now())
+
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  class Class @relation(fields: [classId], references: [id], onDelete: Cascade)
+}
+
+model PermissionRequest {
+  id String @id @default(uuid())
+  requestedById String
+  approvedById String?
+  reason String?
+  status StatusRequest @default(PENDING)
+  requestedAt DateTime @default(now())
+
+  requester User @relation("Requester", fields: [requestedById], references: [id], onDelete: Cascade)
+  approver User? @relation("Approver", fields: [approvedById], references: [id], onDelete: SetNull)
+}
+
+enum RoleList {
+  ADMIN
+  TEACHER
+  STUDENT
+  GUARDIAN
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum StatusAttendance {
+  PRESENT
+  ABSENT
+  LATE
+}
+
+enum StatusRequest {
+  PENDING
+  APPROVED
+  DENIED
+}
