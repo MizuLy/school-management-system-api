@@ -10,6 +10,8 @@ const guardianRoute = require("./routes/guardian.route");
 const studentRoute = require("./routes/student.route");
 const registerTokenRoute = require("./routes/registerToken.route");
 const eventRoute = require("./routes/event.route");
+const classRoute = require("./routes/class.route");
+const courseRoute = require("./routes/course.route");
 
 config();
 connectDB();
@@ -29,6 +31,8 @@ app.use("/api/teachers", teacherRoute);
 app.use("/api/guardians", guardianRoute);
 app.use("/api/students", studentRoute);
 app.use("/api/events", eventRoute);
+app.use("/api/classes", classRoute);
+app.use("/api/courses", courseRoute);
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);

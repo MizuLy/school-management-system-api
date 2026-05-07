@@ -97,21 +97,21 @@ model RegistrationToken { // For Student to scan
 
 model Class {
   id String @id @default(uuid())
-  gradeLevelId String
-  teacherId String
+  courseId String
+  teacherId String?
   room Int
   schedule String // Monday 9:00-11:30
   createdAt DateTime @default(now())
 
-  teacher Teacher @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  teacher Teacher? @relation(fields: [teacherId], references: [id], onDelete: Cascade)
   subjects Subject[]
   assignments Assignment[]
   attendances Attendance[]
   classStudent ClassStudent[]
-  gradeLevel GradeLevel @relation(fields: [gradeLevelId], references: [id], onDelete: Cascade)
+  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
 }
 
-model GradeLevel {
+model Course {
   id String @id @default(uuid())
   name String @unique // same name cant exist twice
   description String?
