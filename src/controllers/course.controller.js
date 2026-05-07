@@ -26,7 +26,19 @@ const addCourse = async (req, res) => {
 
 const getCourses = async (req, res) => {
   try {
-  } catch (error) {}
+    const courses = await prisma.course.findMany();
+
+    res.status(200).json({
+      status: "success",
+      data: courses.map((c) => ({
+        id: c.id,
+        name: c.name,
+        description: c.description,
+      })),
+    });
+  } catch (error) {
+    res.status(500).json({ error: err.message });
+  }
 };
 
-module.exports = { addCourse };
+module.exports = { addCourse, getCourses };
