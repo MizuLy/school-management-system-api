@@ -103,18 +103,20 @@ model Class {
   schedule String // Monday 9:00-11:30
   createdAt DateTime @default(now())
 
-  teacher Teacher? @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  teacher Teacher? @relation(fields: [teacherId], references: [id], onDelete: SetNull)
   subjects Subject[]
   assignments Assignment[]
   attendances Attendance[]
   classStudent ClassStudent[]
-  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  course Course @relation(fields: [courseId], references: [id], onDelete: Restrict) // avoid accidental delete if admin tryna delete a course that is assigned to that class (to delete, admin has to reassign class first)
 }
 
 model Course {
   id String @id @default(uuid())
   name String @unique // same name cant exist twice
   description String?
+  price Float?
+  duration String?
   createdAt DateTime @default(now())
 
   classes Class[]
