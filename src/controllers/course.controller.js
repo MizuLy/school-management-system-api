@@ -1,5 +1,4 @@
 const { prisma } = require("../config/db");
-const { updateEvent } = require("./event.controller");
 
 const addCourse = async (req, res) => {
   try {

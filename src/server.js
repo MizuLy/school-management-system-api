@@ -12,6 +12,7 @@ const registerTokenRoute = require("./routes/registerToken.route");
 const eventRoute = require("./routes/event.route");
 const classRoute = require("./routes/class.route");
 const courseRoute = require("./routes/course.route");
+const enrollRoute = require("./routes/classStudent.route");
 
 config();
 connectDB();
@@ -33,6 +34,7 @@ app.use("/api/students", studentRoute);
 app.use("/api/events", eventRoute);
 app.use("/api/classes", classRoute);
 app.use("/api/courses", courseRoute);
+app.use("/api/enroll", enrollRoute);
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
