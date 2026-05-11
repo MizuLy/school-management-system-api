@@ -42,7 +42,6 @@ model Teacher {
   // Relation
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   classes Class[]
-  subjects Subject[]
 }
 
 model Student {
@@ -104,7 +103,6 @@ model Class {
   createdAt DateTime @default(now())
 
   teacher Teacher? @relation(fields: [teacherId], references: [id], onDelete: SetNull)
-  subjects Subject[]
   assignments Assignment[]
   attendances Attendance[]
   classStudent ClassStudent[]
@@ -135,18 +133,6 @@ model ClassStudent {
   @@unique([studentId, classId])
 }
 
-model Subject {
-  id String @id @default(uuid())
-  name String
-  classId String
-  teacherId String
-  createdAt DateTime @default(now())
-
-  class Class @relation(fields: [classId], references: [id], onDelete: Cascade)
-  teacher Teacher @relation(fields: [teacherId], references: [id], onDelete: Cascade)
-  assignments Assignment[]
-}
-
 model Submission {
   id String @id @default(uuid())
   studentId String
@@ -162,14 +148,13 @@ model Submission {
 model Assignment {
   id String @id @default(uuid())
   title String?
-  subjectId String
   classId String
   fileUrl String?
   description String?
   postedAt DateTime @default(now())
+  dueDate DateTime? @db.Date
 
   submissions Submission[]
-  subject Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
   class Class @relation(fields: [classId], references: [id], onDelete: Cascade)
 }
 

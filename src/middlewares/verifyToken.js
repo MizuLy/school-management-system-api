@@ -21,7 +21,8 @@ const verifyToken = async (req, res, next) => {
 
     const user = await prisma.user.findUnique({
       where: { id: decoded.id },
-      select: { id: true, name: true, email: true, role: true }, // Only what I need, no password shown
+      include: { teacher: true },
+      // select: { id: true, name: true, email: true, role: true }, // Only what I need, no password shown
     });
 
     if (!user) return res.status(401).json({ error: "User no longer exists" });
