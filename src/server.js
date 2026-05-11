@@ -12,6 +12,7 @@ const registerTokenRoute = require("./routes/registerToken.route");
 const eventRoute = require("./routes/event.route");
 const classRoute = require("./routes/class.route");
 const courseRoute = require("./routes/course.route");
+const enrollRoute = require("./routes/classStudent.route");
 const assignmentRoute = require("./routes/assignment.route");
 
 config();

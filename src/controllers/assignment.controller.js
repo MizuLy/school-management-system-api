@@ -22,7 +22,7 @@ const addAssignment = async (req, res) => {
         classId,
         description,
         fileUrl,
-        dueDate,
+        dueDate: dueDate ? new Date(dueDate) : null,
       },
     });
 
@@ -44,7 +44,12 @@ const addAssignment = async (req, res) => {
 const getAssignments = async (req, res) => {
   try {
     const results = await prisma.assignment.findMany({
-      where: { classId: req.query.classId }, // GET /api/assignments?classId=abc123
+      where: {
+        classId: req.query.classId, // GET /api/assignments?classId=abc123
+        class: {
+          teacherId: req.user.teacher.id, // Filter class depend on teacher
+        },
+      },
     });
 
     res.status(200).json({
