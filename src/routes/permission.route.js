@@ -13,6 +13,6 @@ const router = express.Router();
 router.post("/", verifyToken, addPermission);
 router.get("/", verifyToken, getPermissions);
 router.patch("/:id", verifyToken, isAdmin, updatePermission);
-router.delete("/:id", verifyToken, removePermission);
+router.delete("/:id", verifyToken, isAdmin, removePermission);
 
 module.exports = router;

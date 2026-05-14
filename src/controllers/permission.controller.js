@@ -75,7 +75,7 @@ const updatePermission = async (req, res) => {
     if (permissionResult.status !== "PENDING")
       return res
         .status(400)
-        .json({ error: "Permission request already processed" });
+        .json({ error: `Already ${permissionResult.status.toLowerCase()}` });
 
     // Validate status
     if (!status) {
