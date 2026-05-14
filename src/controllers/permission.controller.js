@@ -72,6 +72,11 @@ const updatePermission = async (req, res) => {
 
     if (!permissionResult) return res.status(404).json({ error: "Not found" });
 
+    if (permissionResult.status !== "PENDING")
+      return res
+        .status(400)
+        .json({ error: "Permission request already processed" });
+
     // Validate status
     if (!status) {
       return res.status(400).json({
