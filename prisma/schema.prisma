@@ -190,6 +190,7 @@ model PermissionRequest {
   reason String?
   status StatusRequest @default(PENDING)
   requestedAt DateTime @default(now())
+  approvedAt DateTime?
 
   requester User @relation("Requester", fields: [requestedById], references: [id], onDelete: Cascade)
   approver User? @relation("Approver", fields: [approvedById], references: [id], onDelete: SetNull)
