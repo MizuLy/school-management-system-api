@@ -14,6 +14,7 @@ const classRoute = require("./routes/class.route");
 const courseRoute = require("./routes/course.route");
 const enrollRoute = require("./routes/classStudent.route");
 const assignmentRoute = require("./routes/assignment.route");
+const submissionRoute = require("./routes/submission.route");
 
 config();
 connectDB();
@@ -37,6 +38,7 @@ app.use("/api/classes", classRoute);
 app.use("/api/courses", courseRoute);
 app.use("/api/enroll", enrollRoute);
 app.use("/api/assignments", assignmentRoute);
+app.use("/api/submissions", submissionRoute);
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);

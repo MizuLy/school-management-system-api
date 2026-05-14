@@ -139,6 +139,7 @@ model Submission {
   assignmentId String
   fileUrl String?
   submittedAt DateTime @default(now())
+  updatedAt DateTime @updatedAt // @updatedAt is a Prisma decorator that automatically updates the timestamp whenever the record is modified
 
   student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
   assignment Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)

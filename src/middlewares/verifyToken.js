@@ -21,7 +21,7 @@ const verifyToken = async (req, res, next) => {
 
     const user = await prisma.user.findUnique({
       where: { id: decoded.id },
-      include: { teacher: true },
+      include: { teacher: true, student: true },
       // select: { id: true, name: true, email: true, role: true }, // Only what I need, no password shown
     });
 
