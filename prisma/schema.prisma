@@ -57,7 +57,7 @@ model Student {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   guardian Guardian? @relation(fields: [guardianId], references: [id], onDelete: SetNull)
   submissions Submission[]
-  grades Grade[]
+  // grades Grade[]
   attendance Attendance[]
   classStudent ClassStudent[]
 }
@@ -143,7 +143,7 @@ model Submission {
 
   student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
   assignment Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
-  grade Grade[]
+  grade Grade?
 }
 
 model Assignment {
@@ -161,13 +161,13 @@ model Assignment {
 
 model Grade {
   id String @id @default(uuid())
-  studentId String
-  submissionId String
+  // studentId String
+  submissionId String @unique // Avoid grading twice
   score Float
-  term Int
   recordedAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  // student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
   submission Submission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
 }
 

@@ -29,6 +29,7 @@ const addAssignment = async (req, res) => {
     res.status(201).json({
       status: "success",
       data: {
+        id: assignment.id,
         title: assignment.title,
         classId: assignment.classId,
         description: assignment.description,
