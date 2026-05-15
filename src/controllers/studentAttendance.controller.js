@@ -4,6 +4,14 @@ const addStudentAttendance = async (req, res) => {
   try {
     const { studentId, classId, date, status } = req.body;
 
+    const classResult = await prisma.class.findUnique({
+      where: { id: classId },
+    });
+
+    if (!classResult) return res.status(404).json({ error: "Class not found" });
+    if (classResult.teacherId !== req.user.teacher.id)
+      return res.status(403).json({ error: "Not your class" });
+
     const result = await prisma.studentAttendance.create({
       data: { studentId, classId, date: new Date(date), status },
     });
@@ -57,6 +65,13 @@ const updateStudentAttendance = async (req, res) => {
     });
 
     if (!attendanceResult) return res.status(404).json({ error: "Not found" });
+
+    const classResult = await prisma.class.findUnique({
+      where: { id: attendanceResult.classId },
+    });
+
+    if (classResult.teacherId !== req.user.teacher.id)
+      return res.status(403).json({ error: "Not your class" });
 
     if (!status) return res.status(400).json({ error: "Status is required" });
 
