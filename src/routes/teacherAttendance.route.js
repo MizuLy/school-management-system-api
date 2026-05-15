@@ -11,6 +11,6 @@ const router = express.Router();
 
 router.post("/", verifyToken, isAdmin, addTeacherAttendance);
 router.get("/", verifyToken, getTeacherAttendances);
-router.put("/:id", verifyToken, isAdmin, updateTeacherAttendance);
+router.patch("/:id", verifyToken, isAdmin, updateTeacherAttendance);
 
 module.exports = router;
