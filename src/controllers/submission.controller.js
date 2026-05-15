@@ -73,6 +73,9 @@ const updateSubmit = async (req, res) => {
 
     if (!submitResult) return res.status(404).json({ error: "Not found" });
 
+    if (submitResult.studentId !== req.user.student.id)
+      return res.status(403).json({ error: "Not authorized" });
+
     const submitUpdateData = {};
     if (fileUrl !== null) submitUpdateData.fileUrl = fileUrl;
 
@@ -116,6 +119,9 @@ const removeSubmit = async (req, res) => {
     });
 
     if (!submitResult) return res.status(404).json({ error: "Not found" });
+
+    if (submitResult.studentId !== req.user.student.id)
+      return res.status(403).json({ error: "Not authorized" });
 
     await prisma.submission.delete({
       where: { id: submitResult.id },
