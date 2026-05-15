@@ -187,7 +187,6 @@ model StudentAttendance {
 model TeacherAttendance{ 
   id String @id @default(uuid())
   teacherId String
-  classId String
   date DateTime @db.Date
   status StatusAttendance @default(PRESENT)
   confirmedAt DateTime @default(now())
@@ -226,6 +225,7 @@ enum StatusAttendance {
   PRESENT
   ABSENT
   LATE
+  PERMISSION
 }
 
 enum StatusRequest {
