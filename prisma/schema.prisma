@@ -42,6 +42,7 @@ model Teacher {
   // Relation
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   classes Class[]
+  attendance TeacherAttendance[]
 }
 
 model Student {
@@ -58,7 +59,7 @@ model Student {
   guardian Guardian? @relation(fields: [guardianId], references: [id], onDelete: SetNull)
   submissions Submission[]
   // grades Grade[]
-  attendance Attendance[]
+  attendance StudentAttendance[]
   classStudent ClassStudent[]
 }
 
@@ -104,7 +105,7 @@ model Class {
 
   teacher Teacher? @relation(fields: [teacherId], references: [id], onDelete: SetNull)
   assignments Assignment[]
-  attendances Attendance[]
+  attendances StudentAttendance[]
   classStudent ClassStudent[]
   course Course @relation(fields: [courseId], references: [id], onDelete: Restrict) // avoid accidental delete if admin tryna delete a course that is assigned to that class (to delete, admin has to reassign class first)
 }
@@ -171,7 +172,7 @@ model Grade {
   submission Submission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
 }
 
-model Attendance {
+model StudentAttendance {
   id String @id @default(uuid())
   studentId String
   classId String
@@ -183,12 +184,24 @@ model Attendance {
   class Class @relation(fields: [classId], references: [id], onDelete: Cascade)
 }
 
+model TeacherAttendance{ 
+  id String @id @default(uuid())
+  teacherId String
+  classId String
+  date DateTime @db.Date
+  status StatusAttendance @default(PRESENT)
+  confirmedAt DateTime @default(now())
+
+  teacher Teacher @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+}
+
 model PermissionRequest {
   id String @id @default(uuid())
   requestedById String
   approvedById String?
   reason String?
   status StatusRequest @default(PENDING)
+  date DateTime? @db.Date // When they're back
   requestedAt DateTime @default(now())
   approvedAt DateTime?
 

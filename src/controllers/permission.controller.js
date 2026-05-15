@@ -2,12 +2,16 @@ const { prisma } = require("../config/db");
 
 const addPermission = async (req, res) => {
   try {
-    const { reason } = req.body;
+    const { reason, date } = req.body;
 
     const requestedById = req.user.id;
 
     const result = await prisma.permissionRequest.create({
-      data: { reason, requestedById, requestedAt: new Date() },
+      data: {
+        reason,
+        requestedById,
+        date: date ? new Date(date) : null,
+      },
       include: {
         requester: {
           select: { name: true },
@@ -23,6 +27,7 @@ const addPermission = async (req, res) => {
         name: result.requester.name,
         reason: result.reason,
         status: result.status,
+        date: result.date,
         requestedAt: result.requestedAt,
       },
     });
@@ -53,6 +58,7 @@ const getPermissions = async (req, res) => {
         approvedById: r.approvedById,
         approverName: r.approver?.name ?? null,
         status: r.status,
+        date: r.date,
         requestedAt: r.requestedAt,
       })),
     });
@@ -68,9 +74,29 @@ const updatePermission = async (req, res) => {
 
     const permissionResult = await prisma.permissionRequest.findUnique({
       where: { id: req.params.id },
+      include: {
+        requester: { select: { role: true } },
+      },
     });
 
     if (!permissionResult) return res.status(404).json({ error: "Not found" });
+
+    if (
+      permissionResult.requester.role === "STUDENT" &&
+      req.user.role !== "TEACHER"
+    ) {
+      return res
+        .status(403)
+        .json({ error: "Only teacher can approve student requests" });
+    }
+    if (
+      permissionResult.requester.role === "TEACHER" &&
+      req.user.role !== "ADMIN"
+    ) {
+      return res
+        .status(403)
+        .json({ error: "Only admin can approve teacher requests" });
+    }
 
     if (permissionResult.status !== "PENDING")
       return res
