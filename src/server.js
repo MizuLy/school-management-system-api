@@ -45,8 +45,8 @@ app.use("/api/assignments", assignmentRoute);
 app.use("/api/submissions", submissionRoute);
 app.use("/api/permissions", permissionRoute);
 app.use("/api/grades", gradeRoute);
-app.use("/api/studentattendances", studentAttendanceRoute);
-app.use("/api/teacherattendances", teacherAttendanceRoute);
+app.use("/api/student-attendances", studentAttendanceRoute);
+app.use("/api/teacher-attendances", teacherAttendanceRoute);
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
