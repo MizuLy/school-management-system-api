@@ -73,7 +73,8 @@ npm run dev
 | POST | `/register` | Public | Register admin account |
 | POST | `/login` | Public | Login |
 | POST | `/logout` | Public | Logout |
-| GET | `/:id` | Auth | Get current user |
+| GET | `/me` | Auth | Get current user profile |
+| PATCH | `/change-password` | Auth | Change password |
 
 ---
 
@@ -112,7 +113,7 @@ npm run dev
 | Method | Endpoint | Access | Description |
 |--------|----------|--------|-------------|
 | POST | `/` | Admin | Create guardian account |
-| GET | `/` | Auth | Get all guardians with students |
+| GET | `/` | Auth | Get all guardians with their students |
 | PUT | `/:id` | Admin | Update guardian |
 | DELETE | `/:id` | Admin | Remove guardian |
 
@@ -185,21 +186,21 @@ npm run dev
 
 ### Attendance
 
-#### Student Attendance — `/api/student-attendances`
+#### Student Attendance — `/api/studentattendances`
 
 | Method | Endpoint | Access | Description |
 |--------|----------|--------|-------------|
 | POST | `/` | Teacher | Mark student attendance |
 | GET | `/` | Auth | Get student attendances |
-| PUT | `/:id` | Teacher | Update student attendance |
+| PATCH | `/:id` | Teacher | Update student attendance status |
 
-#### Teacher Attendance — `/api/teacher-attendances`
+#### Teacher Attendance — `/api/teacherattendances`
 
 | Method | Endpoint | Access | Description |
 |--------|----------|--------|-------------|
 | POST | `/` | Admin | Mark teacher attendance |
 | GET | `/` | Auth | Get teacher attendances |
-| PUT | `/:id` | Admin | Update teacher attendance |
+| PATCH | `/:id` | Admin | Update teacher attendance status |
 
 ---
 
@@ -225,19 +226,25 @@ npm run dev
 
 ---
 
-## Attendance Status
+## Enums
 
+### Attendance Status
 `PRESENT` / `ABSENT` / `LATE` / `PERMISSION`
 
-## Permission Request Status
-
+### Permission Request Status
 `PENDING` / `APPROVED` / `DENIED`
+
+### Gender
+`MALE` / `FEMALE` / `OTHER`
 
 ---
 
 ## Notes
 
-- File uploads are stored in `/uploads` folder
+- File uploads are stored in the `/uploads` folder
 - All IDs are UUIDs
-- Dates should be in `YYYY-MM-DD` format
-- Status enums are uppercase
+- Dates must be in `YYYY-MM-DD` format
+- Status enums must be uppercase
+- Token-based registration links expire after 24 hours
+- Teachers can only manage their own class data
+- Students can only access their own submissions and grades
